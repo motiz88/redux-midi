@@ -10,6 +10,16 @@ function isInvalidKey (key) {
 module.exports = function (chai, utils) {
   var Assertion = chai.Assertion;
 
+  /**
+   * @memberof obj
+   * @name FSA
+   * @readonly
+   * @desc Asserts that obj is a Flux Standard Action.
+   * @example
+   * expect(obj).to.be.an.FSA;
+   * @example
+   * obj.should.be.an.FSA;
+   * */
   Assertion.addProperty('FSA', function () {
     var action = this._obj;
     if (utils.flag(this, 'negate')) {
