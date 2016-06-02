@@ -46,6 +46,7 @@
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
     "chai-deep-match": "^1.0.2",
+    "chai-flux": "^1.0.1",
     "chai-things": "^0.2.0",
     "coveralls": "^2.11.9",
     "cracks": "^3.1.2",
