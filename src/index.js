@@ -62,7 +62,9 @@ import observeStore from './observeStore';
 import sortBy from 'lodash.sortby';
 import deepEqual from 'deep-equal';
 
-const defaultRequestMIDIAccess = global && global.navigator && global.navigator.requestMIDIAccess.bind(global.navigator);
+const defaultRequestMIDIAccess = (global && global.navigator && global.navigator.requestMIDIAccess.bind(global.navigator)) || (
+  () => Promise.reject(new Error('Web MIDI API not available'))
+);
 
 /**
  * Create a Redux {@link https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer|store enhancer} wrapping MIDI I/O and device discovery.
