@@ -26,17 +26,17 @@ SHA=`git rev-parse --verify HEAD`
 # Clone the existing gh-pages for this repo into doc/
 # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deploy)
 git clone $REPO doc
-cd doc
+cd doc # <root>/doc
 git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 git clean -f
 git reset --hard
-cd ..
+cd .. # <root>/doc
 
 # Run our compile script
 doCompile
 
 # Now let's go have some fun with the cloned repo
-cd doc
+cd doc # <root>/doc
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
@@ -57,7 +57,7 @@ ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
 ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
 ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
 ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ../deploy_key.enc -out deploy_key -d
+openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ../auto-deploy-docs/deploy_key.enc -out deploy_key -d
 chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
