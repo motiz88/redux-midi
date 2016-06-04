@@ -48,7 +48,6 @@
     "chai-flux": "^1.0.2",
     "chai-things": "^0.2.0",
     "coveralls": "^2.11.9",
-    "cracks": "^3.1.2",
     "cross-env": "^1.0.8",
     "deep-freeze": "0.0.1",
     "documentation": "^4.0.0-beta4",
@@ -77,15 +76,6 @@
     "deep-equal": "^1.0.1",
     "lodash.sortby": "^4.5.0",
     "redux-duck": "^1.0.1"
-  },
-  "release": {
-    "verifyRelease": {
-      "path": "cracks",
-      "paths": [
-        "test",
-        "package.json"
-      ]
-    }
   },
   "semistandard": {
     "ignore": [
