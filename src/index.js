@@ -104,8 +104,9 @@ export const makeMidiEnhancer = ({midiOptions, stateKey = 'midi', requestMIDIAcc
 
   const enhancedStoreMethods = {
     dispatch (action) {
-      const {payload} = action;
+      action = store.dispatch(action);
       if (action.type === SEND_MIDI_MESSAGE) {
+        const {payload} = action;
         const {timestamp, data, device} = payload;
         if (midiAccess) {
           const {outputs} = midiAccess;
@@ -114,7 +115,7 @@ export const makeMidiEnhancer = ({midiOptions, stateKey = 'midi', requestMIDIAcc
           }
         }
       }
-      return store.dispatch(action);
+      return action;
     }
   };
 

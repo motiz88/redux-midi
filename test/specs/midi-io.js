@@ -5,14 +5,21 @@ import MidiApi from 'web-midi-test-api';
 import createMockStore from '../utils/mockStore';
 import unique from 'lodash.uniq';
 import sinon from 'sinon';
+import { applyMiddleware, compose } from 'redux';
 
 describe('MIDI I/O', () => {
   let store, api;
   beforeEach(() => {
     api = new MidiApi();
-    store = createMockStore(undefined, makeMidiEnhancer({
+    const middleware = () => next => action => {
+      if (action.type === 'NOT_A_MIDI_MESSAGE') {
+        return next({...action, type: SEND_MIDI_MESSAGE});
+      }
+      return next(action);
+    };
+    store = createMockStore(undefined, compose(makeMidiEnhancer({
       requestMIDIAccess: api.requestMIDIAccess
-    }));
+    }), applyMiddleware(middleware)));
     return new Promise(resolve => setImmediate(resolve));
   });
   it('should see no devices to begin with', () => {
@@ -92,6 +99,15 @@ describe('MIDI I/O', () => {
       device.inputs[0].onmidimessage = sinon.spy();
       store.dispatch({ type: SEND_MIDI_MESSAGE, payload: {data: [0x80, 0x7f, 0x7f], timestamp: 1234, device: outputIds[0]} });
       device.inputs[0].onmidimessage.should.have.been.calledWith({data: new Uint8Array([0x80, 0x7f, 0x7f]), receivedTime: 1234});
+    });
+    it('should pick up on actions created by later middleware', () => {
+      const devices = store.getState().midi.devices;
+      const outputs = devices.filter(device => device.type === 'output');
+      console.log(store.getState());
+      const outputIds = outputs.map(device => device.id);
+      device.inputs[0].onmidimessage = sinon.spy();
+      store.dispatch({ type: 'NOT_A_MIDI_MESSAGE', payload: {data: [0x80, 0x7f, 0x7f], timestamp: 1234, device: outputIds[0]} });
+      device.inputs[0].onmidimessage.should.have.been.called;
     });
   });
 });
