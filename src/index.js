@@ -42,8 +42,16 @@ const initialState = {
   devices: [],
   listeningDevices: []
 };
-
-const reducer = myDuck.createReducer({
+/**
+ * Reduces MIDI I/O and device discovery actions to state changes.
+ * Maintains state in two keys: devices (an array of device objects straight from the underlying Web MIDI API) and `listeningDevices` (an array of device IDs being listened to).
+ * @example
+ * import { createStore, applyMiddleware, combineReducers } from 'redux';
+ * import setup, { reducer } from 'redux-midi';
+ * const {inputMiddleware, outputMiddleware} = setup();
+ * const store = createStore(combineReducers({midi: reducer}), initialState, applyMiddleware(inputMiddleware, outputMiddleware));
+ */
+export const reducer = myDuck.createReducer({
   [RECEIVE_DEVICE_LIST]: (state, action) => ({
     ...state,
     devices: action.payload
@@ -54,11 +62,6 @@ const reducer = myDuck.createReducer({
   })
 }, initialState);
 
-export { reducer };
-export default reducer;
-
-import observeStore from './observeStore';
-
 import sortBy from 'lodash.sortby';
 import deepEqual from 'deep-equal';
 
@@ -67,113 +70,109 @@ const defaultRequestMIDIAccess = (global && global.navigator && global.navigator
 );
 
 /**
- * Create a Redux {@link https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer|store enhancer} wrapping MIDI I/O and device discovery.
+ * Create a pair of Redux {@link https://github.com/reactjs/redux/blob/master/docs/Glossary.md#middleware|middleware} functions wrapping MIDI I/O and device discovery.
+ * The input middleware dispatches RECEIVE_DEVICE_LIST whenever the list of MIDI devices changes and RECEIVE_MIDI_MESSAGE when MIDI messages are received on devices that are being listened to.
+ * The output middleware sends MIDI messages to output devices as a side effect of SEND_MIDI_MESSAGE actions.
  * @param {MIDIOptions} [$0.midiOptions] - Options with which to invoke `requestMIDIAccess`.
- * @param {string} [$0.stateKey='midi'] - The key under which the enhancer will store MIDI device information in the state.
+ * @param {string} [$0.stateKey='midi'] - The state key at which redux-midi's reducer is mounted.
  * @param {function(MIDIOptions): Promise<MIDIAccess>} [$0.requestMIDIAccess=navigator.requestMIDIAccess] - Web MIDI API entry point.
  * @example
- * // Basic usage
- * import { createStore } from 'redux';
- * import { makeMidiEnhancer } from 'redux-midi';
- * const store = createStore(reducer, initialState, makeMidiEnhancer());
- * @example
- * // With middleware
- * import { createStore, applyMiddleware, compose } from 'redux';
- * import { makeMidiEnhancer } from 'redux-midi';
- * // assuming middleware is an array of Redux middleware functions
- * const store = createStore(reducer, initialState, compose(
- *   makeMidiEnhancer({midiOptions: {sysex: true}}),
- *   applyMiddleware(...middleware)
- * ));
+ * import { createStore, applyMiddleware, combineReducers } from 'redux';
+ * import setup, { reducer } from 'redux-midi';
+ * const {inputMiddleware, outputMiddleware} = setup();
+ * const store = createStore(combineReducers({midi: reducer}), initialState, applyMiddleware(inputMiddleware, outputMiddleware));
  */
-export const makeMidiEnhancer = ({midiOptions, stateKey = 'midi', requestMIDIAccess = defaultRequestMIDIAccess} = {}) => next => (userReducer, preloadedState) => {
-  let midiAccess = null;
+export default function setup ({midiOptions, stateKey = 'midi', requestMIDIAccess = defaultRequestMIDIAccess}) {
+  let midiAccess;
+  const requestMIDIAccessOnce = () => {
+    if (midiAccess) return Promise.resolve(midiAccess);
 
-  const enhancedReducer = (state = {}, action) => {
-    const midiState = state[stateKey];
-    const nextMidiState = reducer(midiState, action);
-
-    const nextState = userReducer(state, action) || {};
-    if (nextMidiState !== nextState[stateKey]) {
-      return {...nextState, [stateKey]: nextMidiState};
-    }
-    return nextState;
+    midiAccess = requestMIDIAccess(midiOptions)
+      .then(receivedMidiAccess => {
+        midiAccess = receivedMidiAccess;
+        return midiAccess;
+      });
+    return midiAccess;
   };
 
-  const store = next(enhancedReducer, preloadedState);
+  const inputMiddleware = ({dispatch, getState}) => {
+    return next => {
+      requestMIDIAccessOnce().then(() => {
+        const sendDeviceList = () => {
+          const devices = sortBy([...midiAccess.inputs.values(), ...midiAccess.outputs.values()].map(device => ({
+            id: device.id,
+            manufacturer: device.manufacturer,
+            name: device.name,
+            type: device.type,
+            version: device.version,
+            state: device.state,
+            connection: device.connection
+          })), 'id');
+          if (!deepEqual(devices, getState()[stateKey].devices)) {
+            dispatch(receiveDeviceList(devices));
+          }
+        };
 
-  const enhancedStoreMethods = {
-    dispatch (action) {
-      action = store.dispatch(action);
-      if (action.type === SEND_MIDI_MESSAGE) {
-        const {payload} = action;
-        const {timestamp, data, device} = payload;
-        if (midiAccess) {
-          const {outputs} = midiAccess;
-          if (outputs.has(device)) {
-            outputs.get(device).send(data, timestamp);
+        midiAccess.onstatechange = () => sendDeviceList();
+        Promise.resolve()
+          .then(sendDeviceList);
+      });
+
+      return action => {
+        const toListen = [];
+        const toUnlisten = [];
+        const prevState = getState()[stateKey] || initialState;
+        action = next(action);
+        const state = getState()[stateKey];
+
+        if (state.listeningDevices !== prevState.listeningDevices) {
+          let prev = new Set(prevState ? prevState.listeningDevices : []);
+          let next = new Set(state.listeningDevices);
+          toUnlisten.push(...prevState.listeningDevices.filter(dev => !next.has(dev)));
+          toListen.push(...state.listeningDevices.filter(dev => !prev.has(dev)));
+        }
+
+        if (state.devices !== prevState.devices) {
+          let prev = new Set(prevState.devices.map(device => device.id));
+          let next = new Set(state.devices.map(device => device.id));
+          toListen.push(...state.listeningDevices.filter(device => midiAccess.inputs.has(device) && next.has(device) && !prev.has(device)));
+        }
+
+        for (let device of toUnlisten) {
+          if (midiAccess.inputs.has(device)) {
+            midiAccess.inputs.get(device).onmidimessage = null;
           }
         }
-      }
-      return action;
-    }
+
+        for (let device of toListen) {
+          if (midiAccess.inputs.has(device)) {
+            midiAccess.inputs.get(device).onmidimessage = ({receivedTime, timeStamp, timestamp, data}) => {
+              timestamp = [receivedTime, timeStamp, timestamp].filter(x => x !== undefined)[0];
+              dispatch(receiveMidiMessage({ timestamp, data, device }));
+            };
+          }
+        }
+        return action;
+      };
+    };
   };
 
-  requestMIDIAccess(midiOptions).then(receivedMidiAccess => {
-    midiAccess = receivedMidiAccess;
-
-    const sendDeviceList = () => {
-      const devices = sortBy([...midiAccess.inputs.values(), ...midiAccess.outputs.values()].map(device => ({
-        id: device.id,
-        manufacturer: device.manufacturer,
-        name: device.name,
-        type: device.type,
-        version: device.version,
-        state: device.state,
-        connection: device.connection
-      })), 'id');
-      if (!deepEqual(devices, store.getState()[stateKey].devices)) {
-        store.dispatch(receiveDeviceList(devices));
-      }
-    };
-
-    midiAccess.onstatechange = () => sendDeviceList();
-
-    observeStore(store, state => state[stateKey], (state, prevState) => {
-      let toUnlisten = [];
-      let toListen = [];
-
-      if (!prevState) prevState = initialState;
-
-      if (state.listeningDevices !== prevState.listeningDevices) {
-        let prev = new Set(prevState ? prevState.listeningDevices : []);
-        let next = new Set(state.listeningDevices);
-        toUnlisten.push(...prevState.listeningDevices.filter(dev => !next.has(dev)));
-        toListen.push(...state.listeningDevices.filter(dev => !prev.has(dev)));
-      }
-
-      if (state.devices !== prevState.devices) {
-        let prev = new Set(prevState.devices.map(device => device.id));
-        let next = new Set(state.devices.map(device => device.id));
-        toListen.push(...state.listeningDevices.filter(device => midiAccess.inputs.has(device) && next.has(device) && !prev.has(device)));
-      }
-
-      for (let device of toUnlisten) {
-        if (midiAccess.inputs.has(device)) {
-          midiAccess.inputs.get(device).onmidimessage = null;
+  const outputMiddleware = () => next => action => {
+    action = next(action);
+    if (action.type === SEND_MIDI_MESSAGE) {
+      const {payload} = action;
+      const {timestamp, data, device} = payload;
+      const send = () => {
+        const {outputs} = midiAccess;
+        if (outputs.has(device)) {
+          outputs.get(device).send(data, timestamp);
         }
-      }
+      };
+      if (midiAccess && !midiAccess.then) send();
+      else requestMIDIAccessOnce().then(send);
+    }
+    return action;
+  };
 
-      for (let device of toListen) {
-        if (midiAccess.inputs.has(device)) {
-          midiAccess.inputs.get(device).onmidimessage = ({receivedTime, timeStamp, timestamp, data}) => {
-            timestamp = [receivedTime, timeStamp, timestamp].filter(x => x !== undefined)[0];
-            store.dispatch(receiveMidiMessage({ timestamp, data, device }));
-          };
-        }
-      }
-    });
-    sendDeviceList();
-  });
-  return {...store, ...enhancedStoreMethods};
-};
+  return { inputMiddleware, outputMiddleware };
+}

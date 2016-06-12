@@ -1,8 +1,8 @@
-export default function observeStore (store, select, onChange) {
+export default function observeStore ({getState, subscribe}, select, onChange) {
   let currentState;
 
   function handleChange () {
-    const nextState = select(store.getState());
+    const nextState = select(getState());
     if (nextState !== currentState) {
       const prevState = currentState;
       currentState = nextState;
@@ -10,7 +10,7 @@ export default function observeStore (store, select, onChange) {
     }
   }
 
-  let unsubscribe = store.subscribe(handleChange);
+  let unsubscribe = subscribe(handleChange);
   handleChange();
   return unsubscribe;
 }

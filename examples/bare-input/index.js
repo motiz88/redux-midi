@@ -1,15 +1,6 @@
 import configureStore from './configureStore';
-import {setListeningDevices, RECEIVE_MIDI_MESSAGE} from '../../src';
-
-const store = configureStore({}, (state, action) => {
-  if (!state.midiMessages) {
-    state = {...state, midiMessages: []};
-  }
-  if (action.type === RECEIVE_MIDI_MESSAGE) {
-    state = {...state, midiMessages: [action.payload, ...state.midiMessages]};
-  }
-  return state;
-});
+import { setListeningDevices } from '../../src';
+const store = configureStore();
 
 const deviceList = document.createElement('pre');
 const messageLog = document.createElement('pre');
