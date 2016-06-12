@@ -103,7 +103,6 @@ describe('MIDI I/O', () => {
     it('should pick up on actions created by later middleware', () => {
       const devices = store.getState().midi.devices;
       const outputs = devices.filter(device => device.type === 'output');
-      console.log(store.getState());
       const outputIds = outputs.map(device => device.id);
       device.inputs[0].onmidimessage = sinon.spy();
       store.dispatch({ type: 'NOT_A_MIDI_MESSAGE', payload: {data: [0x80, 0x7f, 0x7f], timestamp: 1234, device: outputIds[0]} });
