@@ -35,16 +35,6 @@
               
                 
                 <li><a
-                  href='#makeMidiEnhancer'
-                  class="">
-                  makeMidiEnhancer
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
                   href='#receiveDeviceList'
                   class="">
                   receiveDeviceList
@@ -83,6 +73,26 @@
                 
                 </li>
               
+                
+                <li><a
+                  href='#reducer'
+                  class="">
+                  reducer
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#index'
+                  class="">
+                  index
+                  
+                </a>
+                
+                </li>
+              
             </ul>
           </div>
           <div class='mt1 h6 quiet'>
@@ -107,126 +117,6 @@ This is the API documentation. More information is available on the module's <a 
   
 </section>
 </div>
-            
-          
-            
-              <section class='py2 clearfix'>
-
-  
-  <div class='clearfix'>
-    <h2 class='fl' id='makeMidiEnhancer'>
-      makeMidiEnhancer
-    </h2>
-    
-  </div>
-  
-
-  <p>Create a Redux <a href="https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer">store enhancer</a> wrapping MIDI I/O and device discovery.</p>
-
-
-  <div class='pre p1 fill-light'>makeMidiEnhancer</div>
-
-  
-
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>$0</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            (default <code>{}</code>)
-            )</code> 
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <td>Name</td>
-                <td>Description</td>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-                  <td class='break-word'><span class='code bold'>$0.midiOptions</span> <code class='quiet'>[MIDIOptions]</code>
-                  </td>
-                  <td class='break-word'><span>Options with which to invoke 
-<code>requestMIDIAccess</code>
-.
-</span></td>
-                </tr>
-              
-                <tr>
-                  <td class='break-word'><span class='code bold'>$0.stateKey</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>]</code>
-                  
-                    (default <code>&#39;midi&#39;</code>)
-                  </td>
-                  <td class='break-word'><span>The key under which the enhancer will store MIDI device information in the state.
-</span></td>
-                </tr>
-              
-                <tr>
-                  <td class='break-word'><span class='code bold'>$0.requestMIDIAccess</span> <code class='quiet'>[function (MIDIOptions): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&lt;MIDIAccess&gt;]</code>
-                  
-                    (default <code>navigator.requestMIDIAccess</code>)
-                  </td>
-                  <td class='break-word'><span>Web MIDI API entry point.
-</span></td>
-                </tr>
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Basic usage</span>
-<span class="hljs-keyword">import</span> { createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
-<span class="hljs-keyword">import</span> { makeMidiEnhancer } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux-midi'</span>;
-<span class="hljs-keyword">const</span> store = createStore(reducer, initialState, makeMidiEnhancer());</pre>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// With middleware</span>
-<span class="hljs-keyword">import</span> { createStore, applyMiddleware, compose } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
-<span class="hljs-keyword">import</span> { makeMidiEnhancer } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux-midi'</span>;
-<span class="hljs-comment">// assuming middleware is an array of Redux middleware functions</span>
-<span class="hljs-keyword">const</span> store = createStore(reducer, initialState, compose(
-  makeMidiEnhancer({midiOptions: {sysex: <span class="hljs-literal">true</span>}}),
-  applyMiddleware(...middleware)
-));</pre>
-    
-  
-
-  
-
-  
-
-  
-</section>
-
             
           
             
@@ -513,6 +403,170 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
 
   
 
+  
+
+  
+
+  
+
+  
+</section>
+
+            
+          
+            
+              <section class='py2 clearfix'>
+
+  
+  <div class='clearfix'>
+    <h2 class='fl' id='reducer'>
+      reducer
+    </h2>
+    
+  </div>
+  
+
+  <p>Reduces MIDI I/O and device discovery actions to state changes.
+Maintains state in two keys: devices (an array of device objects straight from the underlying Web MIDI API) and <code>listeningDevices</code> (an array of device IDs being listened to).</p>
+
+
+  <div class='pre p1 fill-light'>reducer</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">import</span> { createStore, applyMiddleware, combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+<span class="hljs-keyword">import</span> setup, { reducer } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux-midi'</span>;
+<span class="hljs-keyword">const</span> {inputMiddleware, outputMiddleware} = setup();
+<span class="hljs-keyword">const</span> store = createStore(combineReducers({midi: reducer}), initialState, applyMiddleware(inputMiddleware, outputMiddleware));</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+            
+          
+            
+              <section class='py2 clearfix'>
+
+  
+  <div class='clearfix'>
+    <h2 class='fl' id='index'>
+      index
+    </h2>
+    
+  </div>
+  
+
+  <p>Create a pair of Redux <a href="https://github.com/reactjs/redux/blob/master/docs/Glossary.md#middleware">middleware</a> functions wrapping MIDI I/O and device discovery.
+The input middleware dispatches RECEIVE_DEVICE_LIST whenever the list of MIDI devices changes and RECEIVE_MIDI_MESSAGE when MIDI messages are received on devices that are being listened to.
+The output middleware sends MIDI messages to output devices as a side effect of SEND_MIDI_MESSAGE actions.</p>
+
+
+  <div class='pre p1 fill-light'>index</div>
+
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>$0</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code> 
+          </div>
+          
+          <table class='mt1 mb2 fixed-table h5'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <td>Name</td>
+                <td>Description</td>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>$0.midiOptions</span> <code class='quiet'>[MIDIOptions]</code>
+                  </td>
+                  <td class='break-word'><span>Options with which to invoke 
+<code>requestMIDIAccess</code>
+.
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>$0.stateKey</span> <code class='quiet'>[<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>]</code>
+                  
+                    (default <code>&#39;midi&#39;</code>)
+                  </td>
+                  <td class='break-word'><span>The state key at which redux-midi&#x27;s reducer is mounted.
+</span></td>
+                </tr>
+              
+                <tr>
+                  <td class='break-word'><span class='code bold'>$0.requestMIDIAccess</span> <code class='quiet'>[function (MIDIOptions): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&lt;MIDIAccess&gt;]</code>
+                  
+                    (default <code>navigator.requestMIDIAccess</code>)
+                  </td>
+                  <td class='break-word'><span>Web MIDI API entry point.
+</span></td>
+                </tr>
+              
+            </tbody>
+          </table>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">import</span> { createStore, applyMiddleware, combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+<span class="hljs-keyword">import</span> setup, { reducer } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux-midi'</span>;
+<span class="hljs-keyword">const</span> {inputMiddleware, outputMiddleware} = setup();
+<span class="hljs-keyword">const</span> store = createStore(combineReducers({midi: reducer}), initialState, applyMiddleware(inputMiddleware, outputMiddleware));</pre>
+    
   
 
   
