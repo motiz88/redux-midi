@@ -1,25 +1,33 @@
 /* eslint-env mocha */
 
-import { makeMidiEnhancer, SEND_MIDI_MESSAGE, RECEIVE_MIDI_MESSAGE, SET_LISTENING_DEVICES } from '../../src';
+import setup, { reducer, SEND_MIDI_MESSAGE, RECEIVE_MIDI_MESSAGE, SET_LISTENING_DEVICES } from '../../src';
 import MidiApi from 'web-midi-test-api';
-import createMockStore from '../utils/mockStore';
 import unique from 'lodash.uniq';
 import sinon from 'sinon';
-import { applyMiddleware, compose } from 'redux';
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+import createLogger from 'redux-logger';
+
+const debug = false;
+
+const messageConverter = () => next => action => {
+  if (action.type === 'NOT_A_MIDI_MESSAGE') {
+    return next({...action, type: SEND_MIDI_MESSAGE});
+  }
+  return next(action);
+};
 
 describe('MIDI I/O', () => {
-  let store, api;
+  let store, api, actions;
+  const collector = ({getState}) => (next) => (action) => {
+    actions.push(action);
+    return next(action);
+  };
   beforeEach(() => {
+    actions = [];
+    const logger = createLogger({colors: false});
     api = new MidiApi();
-    const middleware = () => next => action => {
-      if (action.type === 'NOT_A_MIDI_MESSAGE') {
-        return next({...action, type: SEND_MIDI_MESSAGE});
-      }
-      return next(action);
-    };
-    store = createMockStore(undefined, compose(makeMidiEnhancer({
-      requestMIDIAccess: api.requestMIDIAccess
-    }), applyMiddleware(middleware)));
+    const {inputMiddleware, outputMiddleware} = setup({requestMIDIAccess: api.requestMIDIAccess});
+    store = createStore(combineReducers({midi: reducer}), applyMiddleware(inputMiddleware, messageConverter, outputMiddleware, collector, ...(debug ? [logger] : [])));
     return new Promise(resolve => setImmediate(resolve));
   });
   it('should see no devices to begin with', () => {
@@ -82,15 +90,15 @@ describe('MIDI I/O', () => {
       const inputs = devices.filter(device => device.type === 'input');
       const inputIds = inputs.map(device => device.id);
       store.dispatch({ type: SET_LISTENING_DEVICES, payload: inputs.map(device => device.id) });
-      store.clearActions();
+      actions = [];
       device.outputs[0].send([0x80, 0x7f, 0x7f], 1234);
-      store.getActions().should.deep.equal([{ type: RECEIVE_MIDI_MESSAGE, payload: {data: new Uint8Array([0x80, 0x7f, 0x7f]), timestamp: 1234, device: inputIds[0]} }]);
+      actions.should.deep.equal([{ type: RECEIVE_MIDI_MESSAGE, payload: {data: new Uint8Array([0x80, 0x7f, 0x7f]), timestamp: 1234, device: inputIds[0]} }]);
     });
     it('should not receive message when not listening', () => {
       store.dispatch({ type: SET_LISTENING_DEVICES, payload: [] });
-      store.clearActions();
+      actions = [];
       device.outputs[0].send([0x80, 0x7f, 0x7f]);
-      store.getActions().should.be.empty;
+      actions.should.be.empty;
     });
     it('should send message to a valid device', () => {
       const devices = store.getState().midi.devices;
@@ -103,7 +111,6 @@ describe('MIDI I/O', () => {
     it('should pick up on actions created by later middleware', () => {
       const devices = store.getState().midi.devices;
       const outputs = devices.filter(device => device.type === 'output');
-      console.log(store.getState());
       const outputIds = outputs.map(device => device.id);
       device.inputs[0].onmidimessage = sinon.spy();
       store.dispatch({ type: 'NOT_A_MIDI_MESSAGE', payload: {data: [0x80, 0x7f, 0x7f], timestamp: 1234, device: outputIds[0]} });
