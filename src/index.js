@@ -65,7 +65,7 @@ export const reducer = myDuck.createReducer({
 import sortBy from 'lodash.sortby';
 import deepEqual from 'deep-equal';
 
-const defaultRequestMIDIAccess = (global && global.navigator && global.navigator.requestMIDIAccess.bind(global.navigator)) || (
+const defaultRequestMIDIAccess = (global && global.navigator && (typeof global.navigator.requestMIDIAccess === 'function') && global.navigator.requestMIDIAccess.bind(global.navigator)) || (
   () => Promise.reject(new Error('Web MIDI API not available'))
 );
 
