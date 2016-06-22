@@ -2,11 +2,8 @@
   "name": "redux-midi",
   "description": "Streamlined Web MIDI I/O for Redux apps",
   "main": "dist/index.js",
-  "jsnext:main": "src/index.js",
   "files": [
-    "dist",
-    "src",
-    ".babelrc"
+    "dist"
   ],
   "scripts": {
     "repo-setup": "./auto-deploy-docs/travis-gen-deploy-key.sh motiz88/js-starter-2016",
