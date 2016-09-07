@@ -50,7 +50,7 @@
     "documentation": "^4.0.0-beta4",
     "flux-standard-action": "^0.6.1",
     "istanbul": "^1.0.0-alpha.2",
-    "karma": "^0.13.22",
+    "karma": "^1.1.2",
     "karma-sinon-chai": "^1.2.0",
     "lodash.isplainobject": "^4.0.4",
     "lodash.uniq": "^4.3.0",
