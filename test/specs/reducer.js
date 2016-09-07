@@ -13,13 +13,19 @@ describe('reducer', () => {
     reducer(undefined, {}).should.deep.equal({devices: [], listeningDevices: []});
   });
 
-  describeSetterAction({ reducer, type: RECEIVE_DEVICE_LIST, payloads: [
-      [], [''], ['Hua Xing'], ['Yamaha USB-MIDI', 'Hua Xing']
-  ], key: 'devices' });
+  describeSetterAction({
+    reducer,
+    type: RECEIVE_DEVICE_LIST,
+    payloads: [ [], [''], ['Hua Xing'], ['Yamaha USB-MIDI', 'Hua Xing'] ],
+    key: 'devices'
+  });
 
-  describeSetterAction({ reducer, type: SET_LISTENING_DEVICES, payloads: [
-      [], [''], ['Hua Xing'], ['Yamaha USB-MIDI', 'Hua Xing']
-  ], key: 'listeningDevices' });
+  describeSetterAction({
+    reducer,
+    type: SET_LISTENING_DEVICES,
+    payloads: [ [], [''], ['Hua Xing'], ['Yamaha USB-MIDI', 'Hua Xing'] ],
+    key: 'listeningDevices'
+  });
 
   describeNoOpAction({ reducer, type: SEND_MIDI_MESSAGE });
 
