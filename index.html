@@ -35,7 +35,7 @@
               
                 
                 <li><a
-                  href='#receiveDeviceList'
+                  href='#receivedevicelist'
                   class="">
                   receiveDeviceList
                   
@@ -45,7 +45,7 @@
               
                 
                 <li><a
-                  href='#setListeningDevices'
+                  href='#setlisteningdevices'
                   class="">
                   setListeningDevices
                   
@@ -55,7 +55,7 @@
               
                 
                 <li><a
-                  href='#receiveMidiMessage'
+                  href='#receivemidimessage'
                   class="">
                   receiveMidiMessage
                   
@@ -65,7 +65,7 @@
               
                 
                 <li><a
-                  href='#sendMidiMessage'
+                  href='#sendmidimessage'
                   class="">
                   sendMidiMessage
                   
@@ -101,10 +101,9 @@
         </div>
       </div>
       <div class='fix-margin-3'>
-        <div class='px2'>
+        
           
-            
-              <div class='keyline-top-not py2'><section class='py2 clearfix'>
+            <div class='keyline-top-not py2'><section class='py2 clearfix'>
 
   <h2 id='redux-midi' class='mt0'>
     redux-midi
@@ -117,16 +116,16 @@ This is the API documentation. More information is available on the module's <a 
   
 </section>
 </div>
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='receiveDeviceList'>
+    <h3 class='fl m0' id='receivedevicelist'>
       receiveDeviceList
-    </h2>
+    </h3>
     
   </div>
   
@@ -135,7 +134,7 @@ This is the API documentation. More information is available on the module's <a 
 This action is dispatched by the MIDI enhancer at initialization, when devices are connected/disconnected and when devices change state.</p>
 
 
-  <div class='pre p1 fill-light'>receiveDeviceList</div>
+  <div class='pre p1 fill-light mt0'>receiveDeviceList</div>
 
   
 
@@ -174,16 +173,16 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   
 </section>
 
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='setListeningDevices'>
+    <h3 class='fl m0' id='setlisteningdevices'>
       setListeningDevices
-    </h2>
+    </h3>
     
   </div>
   
@@ -191,7 +190,7 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   <p>Creates a <code>SET_LISTENING_DEVICES</code> action. Dispatch this action with the <code>id</code>s of MIDI input devices you would like to receive messages from.</p>
 
 
-  <div class='pre p1 fill-light'>setListeningDevices</div>
+  <div class='pre p1 fill-light mt0'>setListeningDevices</div>
 
   
 
@@ -230,16 +229,16 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   
 </section>
 
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='receiveMidiMessage'>
+    <h3 class='fl m0' id='receivemidimessage'>
       receiveMidiMessage
-    </h2>
+    </h3>
     
   </div>
   
@@ -247,7 +246,7 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   <p>Creates a <code>RECEIVE_MIDI_MESSAGE</code> action. This action is dispatched by the MIDI enhancer when a message received from a device you&#x27;re listening to.</p>
 
 
-  <div class='pre p1 fill-light'>receiveMidiMessage</div>
+  <div class='pre p1 fill-light mt0'>receiveMidiMessage</div>
 
   
 
@@ -266,15 +265,15 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
             <span class='code bold'>message</span> <code class='quiet'>(MIDIMessage)</code> 
           </div>
           
-          <table class='mt1 mb2 fixed-table h5'>
+          <table class='mt1 mb2 fixed-table h5 col-12'>
             <colgroup>
               <col width='30%' />
               <col width='70%' />
             </colgroup>
             <thead>
               <tr class='bold fill-light'>
-                <td>Name</td>
-                <td>Description</td>
+                <th>Name</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody class='mt1'>
@@ -321,16 +320,16 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   
 </section>
 
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='sendMidiMessage'>
+    <h3 class='fl m0' id='sendmidimessage'>
       sendMidiMessage
-    </h2>
+    </h3>
     
   </div>
   
@@ -338,7 +337,7 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   <p>Creates a <code>SEND_MIDI_MESSAGE</code> action. Dispatch this action to send a MIDI message to a specified device.</p>
 
 
-  <div class='pre p1 fill-light'>sendMidiMessage</div>
+  <div class='pre p1 fill-light mt0'>sendMidiMessage</div>
 
   
 
@@ -357,15 +356,15 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
             <span class='code bold'>message</span> <code class='quiet'>(MIDIMessage)</code> 
           </div>
           
-          <table class='mt1 mb2 fixed-table h5'>
+          <table class='mt1 mb2 fixed-table h5 col-12'>
             <colgroup>
               <col width='30%' />
               <col width='70%' />
             </colgroup>
             <thead>
               <tr class='bold fill-light'>
-                <td>Name</td>
-                <td>Description</td>
+                <th>Name</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody class='mt1'>
@@ -412,16 +411,16 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
   
 </section>
 
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='reducer'>
+    <h3 class='fl m0' id='reducer'>
       reducer
-    </h2>
+    </h3>
     
   </div>
   
@@ -430,7 +429,7 @@ This action is dispatched by the MIDI enhancer at initialization, when devices a
 Maintains state in two keys: devices (an array of device objects straight from the underlying Web MIDI API) and <code>listeningDevices</code> (an array of device IDs being listened to).</p>
 
 
-  <div class='pre p1 fill-light'>reducer</div>
+  <div class='pre p1 fill-light mt0'>reducer</div>
 
   
 
@@ -466,16 +465,16 @@ Maintains state in two keys: devices (an array of device objects straight from t
   
 </section>
 
-            
           
-            
-              <section class='py2 clearfix'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
-    <h2 class='fl' id='index'>
+    <h3 class='fl m0' id='index'>
       index
-    </h2>
+    </h3>
     
   </div>
   
@@ -485,7 +484,7 @@ The input middleware dispatches RECEIVE_DEVICE_LIST whenever the list of MIDI de
 The output middleware sends MIDI messages to output devices as a side effect of SEND_MIDI_MESSAGE actions.</p>
 
 
-  <div class='pre p1 fill-light'>index</div>
+  <div class='pre p1 fill-light mt0'>index</div>
 
   
 
@@ -504,15 +503,15 @@ The output middleware sends MIDI messages to output devices as a side effect of 
             <span class='code bold'>$0</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code> 
           </div>
           
-          <table class='mt1 mb2 fixed-table h5'>
+          <table class='mt1 mb2 fixed-table h5 col-12'>
             <colgroup>
               <col width='30%' />
               <col width='70%' />
             </colgroup>
             <thead>
               <tr class='bold fill-light'>
-                <td>Name</td>
-                <td>Description</td>
+                <th>Name</th>
+                <th>Description</th>
               </tr>
             </thead>
             <tbody class='mt1'>
@@ -576,9 +575,8 @@ The output middleware sends MIDI messages to output devices as a side effect of 
   
 </section>
 
-            
           
-        </div>
+        
       </div>
     </div>
   </div>
