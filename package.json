@@ -48,7 +48,7 @@
     "cross-env": "^2.0.0",
     "deep-freeze": "0.0.1",
     "documentation": "^4.0.0-beta4",
-    "flux-standard-action": "^0.6.1",
+    "flux-standard-action": "^1.0.0",
     "istanbul": "^1.0.0-alpha.2",
     "karma": "^0.13.22",
     "karma-sinon-chai": "^1.2.0",
