@@ -62,7 +62,7 @@
     "redux-mock-store": "^1.0.4",
     "semantic-release": "^4.3.5",
     "semistandard": "^9.0.0",
-    "shx": "^0.1.2",
+    "shx": "^0.2.1",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
     "web-midi-test-api": "^0.2.3",
