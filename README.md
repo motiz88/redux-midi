@@ -1,4 +1,6 @@
 # redux-midi
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/motiz88/redux-midi.svg)](https://greenkeeper.io/)
 [![travis][travis-image]][travis-url]
 [![npm][npm-image]][npm-url]
 [![coverage][coverage-image]][coverage-url]
