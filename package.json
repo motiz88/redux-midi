@@ -67,7 +67,7 @@
     "sinon-chai": "^2.8.0",
     "web-midi-test-api": "^0.2.3",
     "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^2.4.3"
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
