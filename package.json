@@ -58,7 +58,7 @@
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
     "redux": "^3.5.2",
-    "redux-logger": "^2.6.1",
+    "redux-logger": "^3.0.4",
     "redux-mock-store": "^1.0.4",
     "semantic-release": "^4.3.5",
     "semistandard": "^9.0.0",
