@@ -63,7 +63,7 @@
     "semantic-release": "^4.3.5",
     "semistandard": "^9.0.0",
     "shx": "^0.1.2",
-    "sinon": "^1.17.4",
+    "sinon": "^2.3.2",
     "sinon-chai": "^2.8.0",
     "web-midi-test-api": "^0.2.3",
     "webpack": "^1.13.1",
